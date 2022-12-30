@@ -14,7 +14,6 @@ const addAlbumHandler = (request, h) => {
     year,
     album_id,
   };
-  console.log(newAlbum);
   albums.push(newAlbum);
 
   const isSuccess =
@@ -49,7 +48,6 @@ const getAllAlbumsHandler = () => ({
 
 const getAlbumByIdHandler = (request, h) => {
   const { id } = request.params;
-  console.log(id);
   const album = albums.filter((m) => m.album_id === id)[0];
   if (album !== undefined) {
     return {
