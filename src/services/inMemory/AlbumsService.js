@@ -17,9 +17,7 @@ class AlbumsService {
       year,
       album_id: id,
     };
-    // console.log(newAlbum);
     this._albums.push(newAlbum);
-    console.log(this._albums);
 
     const isSuccess =
       this._albums.filter((album) => album.album_id === id).length > 0;
