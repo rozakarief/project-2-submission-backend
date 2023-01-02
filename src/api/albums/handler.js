@@ -1,8 +1,10 @@
+/* eslint-disable camelcase */
 /* eslint-disable quotes */
 /* eslint-disable no-underscore-dangle */
 class AlbumsHandler {
-  constructor(service, validator) {
+  constructor(service, songsService, validator) {
     this._service = service;
+    this._songsService = songsService;
     this._validator = validator;
   }
 
@@ -23,23 +25,29 @@ class AlbumsHandler {
     return response;
   }
 
-  async getAlbumsHandler() {
-    const albums = await this._service.getAlbums();
-    return {
-      status: "success",
-      data: {
-        albums,
-      },
-    };
-  }
+  // async getAlbumsHandler() {
+  //   const albums = await this._service.getAlbums();
+  //   return {
+  //     status: "success",
+  //     data: {
+  //       albums,
+  //     },
+  //   };
+  // }
 
   async getAlbumByIdHandler(request) {
     const { id } = request.params;
     const album = await this._service.getAlbumById(id);
+    const album_song = await this._songsService.getSongByAlbum(id);
     return {
       status: "success",
       data: {
-        album,
+        album: {
+          id: album.album_id,
+          name: album.name,
+          year: album.year,
+          songs: album_song,
+        },
       },
     };
   }

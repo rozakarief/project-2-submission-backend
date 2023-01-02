@@ -4,15 +4,21 @@
 require("dotenv").config();
 
 const Hapi = require("@hapi/hapi");
+const ClientError = require("./exceptions/ClientError");
 
 // albums
 const albums = require("./api/albums");
-const ClientError = require("./exceptions/ClientError");
 const AlbumsService = require("./services/postgres/AlbumsService");
 const AlbumsValidator = require("./validator/albums");
 
+// song
+const songs = require("./api/songs");
+const SongsService = require("./services/postgres/SongsService");
+const SongsValidator = require("./validator/songs");
+
 const init = async () => {
   const albumsService = new AlbumsService();
+  const songsService = new SongsService();
 
   const server = Hapi.server({
     port: process.env.PORT,
@@ -24,13 +30,23 @@ const init = async () => {
     },
   });
 
-  await server.register({
-    plugin: albums,
-    options: {
-      service: albumsService,
-      validator: AlbumsValidator,
+  await server.register([
+    {
+      plugin: albums,
+      options: {
+        service: albumsService,
+        songsService,
+        validator: AlbumsValidator,
+      },
     },
-  });
+    {
+      plugin: songs,
+      options: {
+        service: songsService,
+        validator: SongsValidator,
+      },
+    },
+  ]);
 
   server.ext("onPreResponse", (request, h) => {
     // mendapatkan konteks response dari request
