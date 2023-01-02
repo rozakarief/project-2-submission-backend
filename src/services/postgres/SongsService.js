@@ -22,8 +22,6 @@ class SongsService {
       values: [song_id, title, year, genre, performer, duration, albumId],
     };
 
-    console.log(query);
-
     const result = await this._pool.query(query);
 
     if (!result.rows[0].song_id) {
@@ -90,7 +88,7 @@ class SongsService {
       text: "SELECT * FROM songs WHERE id_album = $1",
       values: [album_id],
     };
-    console.log(query);
+
     const result = await this._pool.query(query);
     return result.rows.map(mapToModelSongs);
   }

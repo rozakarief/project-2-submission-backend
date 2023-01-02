@@ -23,8 +23,6 @@ class SongsHandler {
       albumId,
     });
 
-    console.log(songId);
-
     const response = h.response({
       status: "success",
       message: "Lagu berhasil ditambahkan",
