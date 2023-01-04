@@ -8,7 +8,7 @@ const { Pool } = require("pg");
 const InvariantError = require("../../exceptions/InvariantError");
 const NotFoundError = require("../../exceptions/NotFoundError");
 const AuthorizationError = require("../../exceptions/AuthorizationError");
-const { mapToModelPlaylists } = require("../../utils");
+const { mapToModelPlaylists, mapToModelPlaylistById } = require("../../utils");
 
 class PlaylistsService {
   constructor() {
@@ -23,8 +23,6 @@ class PlaylistsService {
       values: [playlist_id, name, owner],
     };
 
-    console.log(query);
-
     const result = await this._pool.query(query);
 
     if (!result.rows[0].playlist_id) {
@@ -35,11 +33,32 @@ class PlaylistsService {
 
   async getPlaylists(owner) {
     const query = {
-      text: `SELECT * FROM playlists WHERE owner = $1`,
+      text: `SELECT a.playlist_id, a.name, b.username 
+            FROM playlists AS a
+            INNER JOIN users AS b ON a.owner = b.id 
+            WHERE owner = $1`,
       values: [owner],
     };
     const result = await this._pool.query(query);
     return result.rows.map(mapToModelPlaylists);
+  }
+
+  async getPlaylistById(playlist_id) {
+    const query = {
+      text: `SELECT a.playlist_id, a.name, b.username 
+            FROM playlists AS a 
+            INNER JOIN users AS b ON a.owner = b.id 
+            WHERE a.playlist_id = $1`,
+      values: [playlist_id],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new NotFoundError("Playlist tidak ditemukan");
+    }
+    // return result.rows.map(mapToModelAlbum)[0];
+    return mapToModelPlaylistById(result.rows[0]);
   }
 
   async deletePlaylistById(playlist_id) {

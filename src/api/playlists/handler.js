@@ -48,11 +48,11 @@ class PlaylistsHandler {
 
     await this._service.verifyPlaylistOwner(id, credentialId);
 
-    await this._service.deleteSongById(id);
+    await this._service.deletePlaylistById(id);
 
     return {
       status: "success",
-      message: "Lagu berhasil dihapus",
+      message: "Playlist berhasil dihapus",
     };
   }
 }
