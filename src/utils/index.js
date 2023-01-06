@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable camelcase */
 const mapToModelAlbum = ({ album_id, name, year }) => ({
   album_id,
@@ -50,6 +51,18 @@ const mapToModelPlaylistById = ({ playlist_id, name, username }) => ({
   username,
 });
 
+const mapToModelActivities = ({
+  username,
+  title,
+  action,
+  time,
+}) => ({
+  username,
+  title,
+  action,
+  time,
+});
+
 module.exports = {
   mapToModelAlbum,
   mapToModelSongs,
@@ -57,4 +70,5 @@ module.exports = {
   mapToModelPlaylists,
   mapToModelPlaylistSongs,
   mapToModelPlaylistById,
+  mapToModelActivities,
 };

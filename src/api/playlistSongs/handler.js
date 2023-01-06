@@ -7,9 +7,10 @@
 /* eslint-disable no-underscore-dangle */
 
 class PlaylistSongsHandler {
-  constructor(service, playlistService, validator) {
+  constructor(service, playlistService, activitiesService, validator) {
     this._service = service;
     this._playlistService = playlistService;
+    this._activitiesService = activitiesService;
     this._validator = validator;
   }
 
@@ -20,13 +21,20 @@ class PlaylistSongsHandler {
     const { songId } = request.payload;
     const { id: credentialId } = request.auth.credentials;
 
-    await this._playlistService.verifyPlaylistOwner(id, credentialId);
+    await this._playlistService.verifyPlaylistAccess(id, credentialId);
 
     await this._service.verifySong({ songId });
 
     await this._service.addSongInPlaylist({
       id_playlist: id,
       id_song: songId,
+    });
+
+    await this._activitiesService.postActivities({
+      playlistId: id,
+      songId,
+      userId: credentialId,
+      action: "add",
     });
 
     const response = h.response({
@@ -41,7 +49,7 @@ class PlaylistSongsHandler {
     const { id } = request.params;
     const { id: credentialId } = request.auth.credentials;
 
-    await this._playlistService.verifyPlaylistOwner(id, credentialId);
+    await this._playlistService.verifyPlaylistAccess(id, credentialId);
 
     const playlist = await this._playlistService.getPlaylistById(id);
     const songsPlaylist = await this._service.getSongsByPlaylist(id);
@@ -65,9 +73,16 @@ class PlaylistSongsHandler {
     const { songId } = request.payload;
     const { id: credentialId } = request.auth.credentials;
 
-    await this._playlistService.verifyPlaylistOwner(id, credentialId);
+    await this._playlistService.verifyPlaylistAccess(id, credentialId);
 
     await this._service.deleteSongInPlaylist(songId);
+
+    await this._activitiesService.postActivities({
+      playlistId: id,
+      songId,
+      userId: credentialId,
+      action: "delete",
+    });
 
     return {
       status: "success",
