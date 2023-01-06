@@ -50,7 +50,6 @@ class SongsService {
       throw new NotFoundError("Lagu tidak ditemukan");
     }
 
-    // return result.rows.map(mapToModelSongBy)[0];
     return mapToModelSongBy(result.rows[0]);
   }
 

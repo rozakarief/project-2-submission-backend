@@ -59,7 +59,6 @@ class PlaylistsService {
     if (!result.rowCount) {
       throw new NotFoundError("Playlist tidak ditemukan");
     }
-    // return result.rows.map(mapToModelAlbum)[0];
     return mapToModelPlaylistById(result.rows[0]);
   }
 

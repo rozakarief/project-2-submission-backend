@@ -28,11 +28,6 @@ class AlbumsService {
     return result.rows[0].album_id;
   }
 
-  // async getAlbums() {
-  //   const result = await this._pool.query("SELECT * FROM albums");
-  //   return result.rows.map(mapToModelAlbum);
-  // }
-
   async getAlbumById(album_id) {
     const query = {
       text: "SELECT * FROM albums WHERE album_id = $1",
