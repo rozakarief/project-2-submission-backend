@@ -32,10 +32,12 @@ class SongsService {
 
   async getSongs(title, performer) {
     const query = {
-      text: `SELECT * FROM songs WHERE lower(title) LIKE '%${title}%' AND lower(performer) LIKE '%${performer}%'`,
+      text: `SELECT song_id, title, performer FROM songs WHERE lower(title) LIKE '%${title}%' AND lower(performer) LIKE '%${performer}%'`,
     };
-    const result = await this._pool.query(query);
-    return result.rows.map(mapToModelSongs);
+    // const result = await this._pool.query(query);
+    // return result.rows.map(mapToModelSongs);
+    const { rows } = await this._pool.query(query);
+    return rows.map(mapToModelSongs);
   }
 
   async getSongById(song_id) {
