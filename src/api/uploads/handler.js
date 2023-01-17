@@ -1,5 +1,7 @@
 /* eslint-disable quotes */
 /* eslint-disable no-underscore-dangle */
+const config = require("../../utils/config");
+
 class UploadsHandler {
   constructor(service, validator, albumService) {
     this._service = service;
@@ -15,7 +17,7 @@ class UploadsHandler {
 
     const filename = await this._service.writeFile(cover, cover.hapi);
 
-    const fileLoc = `http://${process.env.HOST}:${process.env.PORT}/upload/images/${filename}`;
+    const fileLoc = `http://${config.app.host}:${config.app.port}/upload/images/${filename}`;
 
     await this._albumService.addAlbumCoverById(albumId, fileLoc);
 
