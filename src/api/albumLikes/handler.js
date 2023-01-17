@@ -1,3 +1,4 @@
+/* eslint-disable comma-dangle */
 /* eslint-disable camelcase */
 /* eslint-disable quotes */
 /* eslint-disable no-underscore-dangle */
@@ -32,15 +33,18 @@ class AlbumLikesHandler {
 
   async getCountAlbumLikedHandler(request, h) {
     const { albumId } = request.params;
-    const countLikes = await this._service.getCountLikedAlbum(albumId);
+    const { dataSource, likes } = await this._service.getCountLikedAlbum(
+      albumId
+    );
     const response = h.response({
       status: "success",
       data: {
-        likes: countLikes,
+        likes,
       },
     });
 
     response.code(200);
+    response.header("X-Data-Source", dataSource);
     return response;
   }
 }

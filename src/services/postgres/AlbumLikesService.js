@@ -1,3 +1,4 @@
+/* eslint-disable comma-dangle */
 /* eslint-disable camelcase */
 /* eslint-disable quotes */
 /* eslint-disable no-underscore-dangle */
@@ -6,8 +7,9 @@ const { Pool } = require("pg");
 const InvariantError = require("../../exceptions/InvariantError");
 
 class AlbumLikesService {
-  constructor() {
+  constructor(cacheService) {
     this._pool = new Pool();
+    this._cacheService = cacheService;
   }
 
   async addLikedAlbum(userId, albumId) {
@@ -24,6 +26,8 @@ class AlbumLikesService {
       throw new InvariantError("Gagal menyukai Album");
     }
 
+    await this._cacheService.delete(`album-likes:${albumId}`);
+
     return "Berhasil menyukai Album";
   }
 
@@ -38,6 +42,8 @@ class AlbumLikesService {
     if (!result.rows[0].id) {
       throw new InvariantError("Gagal membatalkan Album yang disukai");
     }
+
+    await this._cacheService.delete(`album-likes:${albumId}`);
 
     return "Berhasil membatalkan Album yang disukai";
   }
@@ -54,14 +60,34 @@ class AlbumLikesService {
   }
 
   async getCountLikedAlbum(albumId) {
-    const query = {
-      text: "SELECT COUNT(*) AS count FROM user_album_likes WHERE id_album = $1",
-      values: [albumId],
-    };
+    try {
+      // mendapatkan data dari cache
+      const result = await this._cacheService.get(`album-likes:${albumId}`);
+      return {
+        dataSource: "cache",
+        likes: JSON.parse(result),
+      };
+    } catch (error) {
+      // bila gagal, diteruskan dengan mendapatkan data dari database
+      const query = {
+        text: "SELECT COUNT(*) AS count FROM user_album_likes WHERE id_album = $1",
+        values: [albumId],
+      };
+      const result = await this._pool.query(query);
 
-    const result = await this._pool.query(query);
+      const jumlah = parseInt(result.rows[0].count, 10);
 
-    return parseInt(result.rows[0].count, 10);
+      // data dari db  disimpan pada cache sebelum fungsi getCountLikedAlbum dikembalikan
+      await this._cacheService.set(
+        `album-likes:${albumId}`,
+        JSON.stringify(jumlah)
+      );
+
+      return {
+        dataSource: "database",
+        likes: jumlah,
+      };
+    }
   }
 }
 
