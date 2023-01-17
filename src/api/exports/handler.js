@@ -14,7 +14,6 @@ class ExportsHandler {
 
     const { playlistId } = request.params;
     const { id: credentialId } = request.auth.credentials;
-    console.log(playlistId, credentialId);
 
     await this._playlistService.verifyPlaylistAccess(playlistId, credentialId);
 
@@ -24,7 +23,7 @@ class ExportsHandler {
     };
 
     await this._service.sendMessage(
-      "export:open-musics",
+      "export:playlist",
       JSON.stringify(message)
     );
 

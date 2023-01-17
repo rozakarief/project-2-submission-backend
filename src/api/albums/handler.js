@@ -36,6 +36,7 @@ class AlbumsHandler {
         album: {
           id: album.album_id,
           name: album.name,
+          coverUrl: album.cover,
           year: album.year,
           songs: album_song,
         },

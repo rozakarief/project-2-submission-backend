@@ -1,8 +1,11 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable camelcase */
-const mapToModelAlbum = ({ album_id, name, year }) => ({
+const mapToModelAlbum = ({
+  album_id, name, year, cover,
+}) => ({
   album_id,
   name,
+  cover,
   year,
 });
 
@@ -52,10 +55,7 @@ const mapToModelPlaylistById = ({ playlist_id, name, username }) => ({
 });
 
 const mapToModelActivities = ({
-  username,
-  title,
-  action,
-  time,
+  username, title, action, time,
 }) => ({
   username,
   title,
